@@ -30,7 +30,8 @@ do_setup()
 
     # saftey check, only install on supported versions
     FF_VERSION="$(cat /root/version)"
-    if [ "$FF_VERSION" != "2.4.5" ]
+    MIN_VERSION="2.4.5"
+    if [ "${FF_VERSION//./}" -lt "${MIN_VERSION//./}" ]
     then
         echo "Printer software version not supported."
         xzcat $WORK_DIR/img/install_fail_vers.img.xz > /dev/fb0
@@ -62,6 +63,12 @@ do_setup()
         xzcat $WORK_DIR/img/install_fail_mem.img.xz > /dev/fb0
         exit 0
     fi
+
+    # calculate checksums to be printed in the log
+    if ls /mnt/Adventurer5M*; then
+      md5sum /mnt/Adventurer5M*
+    fi
+    md5sum $WORK_DIR/chroot.tar.xz
 
     # unpack chroot environment
     mkdir -p $CHROOT_DIR
